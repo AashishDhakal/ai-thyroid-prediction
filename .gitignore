@@ -1,0 +1,4 @@
+*.ipynb
+extract_data.py
+.ipynb_checkpoints
+__pycache__
