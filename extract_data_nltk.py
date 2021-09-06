@@ -57,11 +57,27 @@ def check_diagnosis(tokens):
         return 'none'
 
 
+def check_pregnancy(tokens, gender):
+    if gender == 'M':
+        return 'false'
+    elif gender == 'F':
+        try:
+            if tokens.index('pregnant'):
+                return 'true'
+        except ValueError:
+            try:
+                if tokens.index('not pregnant'):
+                    return 'false'
+            except ValueError:
+                return 'false'
+
+
 with open("dataset.txt") as txtfile:
     data = txtfile.read()
     data_list = data.split('\n')
         
     jsonArray = []
+    i = 0
     for item in data_list:
 
         #print(item, end="\n\n")
@@ -76,6 +92,7 @@ with open("dataset.txt") as txtfile:
         out = dict()
         out['age'] = tokens[0].split()[0]
         out['gender'] = GENDER.get(tokens[1]) if tokens[1] in GENDER else '-'
+        out['pregnant'] = check_pregnancy(tokens, out['gender'])
         out['query_hypothyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[0]) else 'false'
         out['query_hyperthyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[1]) else 'false'
         out['query_antithyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[2]) else 'false'
@@ -86,7 +103,9 @@ with open("dataset.txt") as txtfile:
         out['fti'] = value_check(tokens, 'FTI')
         out['diagnosis'] = check_diagnosis(tokens)
 
-        #print(out, end="\n\n")
+        #print(out, end="\n\n\n\n")
+        print(i)
+        i += 1
         jsonArray.append(out)
 
             

@@ -34,15 +34,17 @@ def get_diagnosis(item):
         return "not diagnosed yet"
     target_list = [x for x in target]
     
-    diag_list = []
+    diagnostic = ""
     for x in target_list:
         if x in diagnostics:
-            diag_list.append(x)
+            if x in ['A', 'B', 'C', 'D']:
+                diagnostic = "hyperthyroid"
+            elif x in ['E', 'F', 'G', 'H']:
+                diagnostic = "hypothyroid"
 
-    if not len(diag_list):
+    if not len(diagnostic):
         return "not diagnosed yet"
 
-    diagnostic = diagnostics.get(diag_list[0])
     return f"diagnosed with {diagnostic}"
 
 
@@ -74,15 +76,24 @@ with open("dataset.json") as f:
                 medication = "on Methimazole"
             elif item.get('query_hyperthyroid') == 't':
                 medication = "on Cabimazole"
+            
+            if item.get("sex") == "F":
+                if item.get("pregnant") == "t":
+                    preg = "She's pregnant. "
+                else:
+                    preg = "She's not pregnant. "
+            else:
+                preg = ""
+
             tsh = 'not measured' if item.get('TSH_measured') == 'f' else item.get('TSH')
             t3 = 'not measured' if item.get('T3_measured') == 'f' else item.get('T3')
             tt4 = 'not measured' if item.get('TT4_measured') == 'f' else item.get('TT4')
-            t4u_and_fti = f"T4U is measured {item.get('T4U')} with FTI {item.get('FTI')}"
+            t4u_and_fti = f"T4U is measured {item.get('T4U')} and FTI is measured {item.get('FTI')}."
             if item.get('FTI_measured') == 'f' and item.get('T4U_measured') == 'f':
                 t4u_and_fti = f"T4U and FTI are not measured."
             elif item.get('FTI_measured') == 'f' and item.get('T4U_measured') == 't':
                 t4u_and_fti = f"T4U is measured {item.get('T4U')} and FTI is not measured."
-            else:
+            elif item.get('FTI_measured') == 't' and item.get('T4U_measured') == 'f':
                 t4u_and_fti = f"T4U is not measured and FTI is measured {item.get('FTI')}."
             continue_var = check_meds_continuation(item)
 
@@ -96,7 +107,7 @@ with open("dataset.json") as f:
                     continue_status = f'started {continue_var} meds.'
 
             sentence = f'A {item.get("age")} year old {gender.get(item.get("sex"), "Patient")}, ' \
-                f'is {medication} medication. {pronoun.get(item.get("sex"), "Patient")} consulted '\
+                f'is {medication} medication. {preg}{pronoun.get(item.get("sex"), "Patient")} consulted '\
                 'an endocrinologist. ' + adjective.get(item.get("sex"), "Patient's") +\
                 f' TSH level is {tsh}, T3 is {t3}, TT4 is {tt4}, {t4u_and_fti} {pronoun.get(item.get("sex"), "Patient")} '\
                 f'is {get_diagnosis(item)}. {pronoun.get(item.get("sex"), "Patient")} {continue_status}\n'
