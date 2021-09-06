@@ -1,5 +1,3 @@
 venv
-*.ipynb
-extract_data.py
-.ipynb_checkpoints
+*.ipynb*
 __pycache__

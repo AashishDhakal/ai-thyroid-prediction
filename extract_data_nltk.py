@@ -1,5 +1,6 @@
 from sentence_segment import sentence_segment
 import nltk
+import json
 
 GENDER = {
     'Male': 'M',
@@ -59,34 +60,41 @@ def check_diagnosis(tokens):
 with open("dataset.txt") as txtfile:
     data = txtfile.read()
     data_list = data.split('\n')
-    
-    i = 0
-    
+        
+    jsonArray = []
     for item in data_list:
-        if i > 15 and i < 19:
 
-            print(item, end="\n\n")
+        #print(item, end="\n\n")
 
-            tokens = sentence_segment(item)
+        if not len(item):
+            continue
 
-            print(tokens, end="\n\n")
+        tokens = sentence_segment(item)
 
-            out = dict()
-            out['age'] = tokens[0].split()[0]
-            out['gender'] = GENDER.get(tokens[1]) if tokens[1] in GENDER else '-'
-            out['query_hypothyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[0]) else 'false'
-            out['query_hyperthyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[1]) else 'false'
-            out['query_antithyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[2]) else 'false'
-            out['tsh_level'] = value_check(tokens, 'TSH level')
-            out['t3'] = value_check(tokens, 'T3')
-            out['tt4'] = value_check(tokens, 'TT4')
-            out['t4u'] = value_check(tokens, 'T4U')
-            out['fti'] = value_check(tokens, 'FTI')
-            out['diagnosis'] = check_diagnosis(tokens)
+        #print(tokens, end="\n\n")
 
-            print(out, end="\n\n")
+        out = dict()
+        out['age'] = tokens[0].split()[0]
+        out['gender'] = GENDER.get(tokens[1]) if tokens[1] in GENDER else '-'
+        out['query_hypothyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[0]) else 'false'
+        out['query_hyperthyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[1]) else 'false'
+        out['query_antithyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[2]) else 'false'
+        out['tsh_level'] = value_check(tokens, 'TSH level')
+        out['t3'] = value_check(tokens, 'T3')
+        out['tt4'] = value_check(tokens, 'TT4')
+        out['t4u'] = value_check(tokens, 'T4U')
+        out['fti'] = value_check(tokens, 'FTI')
+        out['diagnosis'] = check_diagnosis(tokens)
 
-        if i > 19:
-            break
+        #print(out, end="\n\n")
+        jsonArray.append(out)
 
-        i += 1
+            
+    with open('revised_dataset.json', 'w+', encoding='utf-8') as file:
+        str_ = json.dumps(jsonArray,
+              indent=4, sort_keys=True,
+              separators=(',', ': '), ensure_ascii=False)
+             
+        file.write(str(str_))
+
+       
