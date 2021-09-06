@@ -1,6 +1,7 @@
 from sentence_segment import sentence_segment
 import nltk
 import json
+import csv
 
 GENDER = {
     'Male': 'M',
@@ -77,7 +78,7 @@ with open("dataset.txt") as txtfile:
     data_list = data.split('\n')
         
     jsonArray = []
-    i = 0
+    # i = 0
     for item in data_list:
 
         #print(item, end="\n\n")
@@ -93,9 +94,9 @@ with open("dataset.txt") as txtfile:
         out['age'] = tokens[0].split()[0]
         out['gender'] = GENDER.get(tokens[1]) if tokens[1] in GENDER else '-'
         out['pregnant'] = check_pregnancy(tokens, out['gender'])
-        out['query_hypothyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[0]) else 'false'
-        out['query_hyperthyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[1]) else 'false'
-        out['query_antithyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[2]) else 'false'
+        # out['query_hypothyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[0]) else 'false'
+        # out['query_hyperthyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[1]) else 'false'
+        # out['query_antithyroid'] = 'true' if data_in_list_check(tokens, MEDICATION[2]) else 'false'
         out['tsh_level'] = value_check(tokens, 'TSH level')
         out['t3'] = value_check(tokens, 'T3')
         out['tt4'] = value_check(tokens, 'TT4')
@@ -104,8 +105,9 @@ with open("dataset.txt") as txtfile:
         out['diagnosis'] = check_diagnosis(tokens)
 
         #print(out, end="\n\n\n\n")
-        print(i)
-        i += 1
+        # print(i)
+        # i += 1
+
         jsonArray.append(out)
 
             
@@ -116,4 +118,14 @@ with open("dataset.txt") as txtfile:
              
         file.write(str(str_))
 
-       
+
+    with open('revised_dataset.csv', 'w', encoding='utf-8', newline='') as file:
+        writer = csv.writer(file)
+        for dict_ in jsonArray[:1]:
+            keys_list = list(dict_)
+        writer.writerow(keys_list)
+        for dict_ in jsonArray:
+            val = []
+            for key,value in dict_.items():
+                val.append(value)
+            writer.writerow(val)
