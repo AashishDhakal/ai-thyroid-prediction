@@ -3,7 +3,7 @@
 #### Download Python3: `https://www.python.org/downloads/`
 
 ### Installation
-* Download or close this project
+* Download or clone this project
 * Go to the project directory through command line
 * Install dependencies: `pip install -r requirements.txt`
 
