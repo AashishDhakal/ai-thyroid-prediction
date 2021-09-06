@@ -15,6 +15,6 @@
 
 ### Prediction
 * Running Jupyter notebook: `jupyter notebook`
-* Browse to: `localhost:8000` if browser don't redirect by its own
+* Browse to: `localhost:8888` if browser don't redirect by its own
 * Open `prediction.ipynb`
 
